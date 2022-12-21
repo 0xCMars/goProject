@@ -18,13 +18,25 @@ type Polar struct {
 	R, T float64
 }
 
+type Magnitude interface {
+	Abs() float64
+}
+
+var m Magnitude
+
 func (p *Point) Abs() float64 {
 	return  math.Sqrt(float64(p.X * p.X + p.Y * p.Y))
 }
 
-func (p *Point) Scale(sclar float64) (q Point) {
-	q.X = p.X * sclar
-	q.Y = p.Y * sclar
+func (p *Point3D) Abs() float64 {
+	return math.Sqrt(float64(p.X*p.X + p.Y*p.Y + p.Z*p.Z))
+}
+
+func (p Polar) Abs() float64 { return p.R }
+
+func (p *Point) Scale(sclar float64) {
+	p.X = p.X * sclar
+	p.Y = p.Y * sclar
 	return
 } 
 
@@ -37,7 +49,15 @@ func main() {
 	p2 := &Point{4, 5}
 	fmt.Printf("The length of the vector p2 is: %f\n", p2.Abs())
 
-	q := p1.Scale(5)
-	fmt.Printf("The length of the vector q is: %f\n", q.Abs())
-	fmt.Printf("Point p1 scaled by 5 has the following coordinates: X %f - Y %f", q.X, q.Y)
+	p1.Scale(5)
+	m = p1
+	fmt.Printf("The length of the vector p1 after scaling is: %f\n", m.Abs())
+	fmt.Printf("Point p1 after scaling has the following coordinates: X %f - Y %f\n", p1.X, p1.Y)
+
+	mag := m.Abs()
+	m = &Point3D{3, 4, 5}
+	mag += m.Abs()
+	m = Polar{2.0, math.Pi / 2}
+	mag += m.Abs()
+	fmt.Printf("The float64 mag is now: %f", mag)
 }
